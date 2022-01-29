@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wordle_game/shake_widget.dart';
 import 'package:wordle_game/words.dart';
 
@@ -63,7 +64,6 @@ class _MyGamePageState extends State<MyGamePage> with TickerProviderStateMixin {
   }
 
   restart() {
-
     setState(() {
       init();
     });
@@ -76,58 +76,80 @@ class _MyGamePageState extends State<MyGamePage> with TickerProviderStateMixin {
         backgroundColor: const Color(0xff121213),
         body: Container(
           padding: const EdgeInsets.all(8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Stack(
             children: [
-              buildAppBar(),
-              Expanded(
-                  child: ListView(
-                padding: const EdgeInsets.all(32),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  GameBoardWidget(
+                  buildAppBar(),
+                  Expanded(
+                      child: ListView(
+                    padding: const EdgeInsets.all(32),
+                    children: [
+                      GameBoardWidget(
+                        key: UniqueKey(),
+                        width: cons.maxWidth,
+                        countGuessTimes: countGuessTimes,
+                        wordLength: MyGame.wordLength,
+                        listPlayerWords: listPlayerWords,
+                        answer: answer,
+                        shakeController: _shakeController,
+                      ),
+                    ],
+                  )),
+                  KeyboardWidget(
                     key: UniqueKey(),
                     width: cons.maxWidth,
-                    countGuessTimes: countGuessTimes,
-                    wordLength: MyGame.wordLength,
-                    listPlayerWords: listPlayerWords,
-                    answer: answer,
-                    shakeController: _shakeController,
+                    listAlphabetCorrect: listAlphabetCorrect,
+                    listAlphabetNone: listAlphabetNone,
+                    onAlphabet: (a) {
+                      if (!isGameEnd) {
+                        if (listPlayerWords[countGuessTimes].length <
+                            MyGame.wordLength) {
+                          setState(() {
+                            listPlayerWords[countGuessTimes].add(a);
+                          });
+                        }
+                      }
+                    },
+                    onBackspace: () {
+                      if (!isGameEnd) {
+                        if (listPlayerWords[countGuessTimes].isNotEmpty) {
+                          setState(() {
+                            listPlayerWords[countGuessTimes].removeLast();
+                          });
+                        }
+                      }
+                    },
+                    onEnter: () {
+                      if (!isGameEnd) {
+                        if (listPlayerWords[countGuessTimes].length ==
+                            MyGame.wordLength) {
+                          verifyWord(listPlayerWords[countGuessTimes]);
+                        }
+                      }
+                    },
                   ),
                 ],
-              )),
-              KeyboardWidget(
-                key: UniqueKey(),
-                width: cons.maxWidth,
-                listAlphabetCorrect: listAlphabetCorrect,
-                listAlphabetNone: listAlphabetNone,
-                onAlphabet: (a) {
-                  if (!isGameEnd) {
-                    if (listPlayerWords[countGuessTimes].length <
-                        MyGame.wordLength) {
-                      setState(() {
-                        listPlayerWords[countGuessTimes].add(a);
-                      });
-                    }
-                  }
-                },
-                onBackspace: () {
-                  if (!isGameEnd) {
-                    if (listPlayerWords[countGuessTimes].isNotEmpty) {
-                      setState(() {
-                        listPlayerWords[countGuessTimes].removeLast();
-                      });
-                    }
-                  }
-                },
-                onEnter: () {
-                  if (!isGameEnd) {
-                    if (listPlayerWords[countGuessTimes].length ==
-                        MyGame.wordLength) {
-                      verifyWord(listPlayerWords[countGuessTimes]);
-                    }
-                  }
-                },
               ),
+              GestureDetector(
+                onTap: () async {
+                  String url = "https://github.com/benznest/noodle_game/";
+                  if (await canLaunch(url)) launch(url);
+                },
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      "Source code\non Github",
+                      style: GoogleFonts.varelaRound(
+                          color: Colors.white.withOpacity(0.5), fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ),
