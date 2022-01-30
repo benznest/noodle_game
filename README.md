@@ -5,7 +5,6 @@ The Wordle game by Flutter.
 ## Dictionary API
 - [https://owlbot.info/api-reference#tag/English-Dictionary](https://owlbot.info/api-reference#tag/English-Dictionary)
 
-
 ## Words
 - [https://github.com/hannahcode/wordle/blob/main/src/constants/wordlist.ts](https://github.com/hannahcode/wordle/blob/main/src/constants/wordlist.ts)
 
