@@ -1,13 +1,13 @@
 import 'owlbot_info_defination_dao.dart';
 
-class OwlbotInfoResponse {
+class OwlbotInfoResponseDao {
   List<OwlbotInfoDefinitionDao>? definitions;
   String? word;
   String? pronunciation;
 
-  OwlbotInfoResponse({this.definitions, this.word, this.pronunciation});
+  OwlbotInfoResponseDao({this.definitions, this.word, this.pronunciation});
 
-  OwlbotInfoResponse.fromJson(Map<String, dynamic> json) {
+  OwlbotInfoResponseDao.fromJson(Map<String, dynamic> json) {
     if (json['definitions'] != null) {
       definitions = <OwlbotInfoDefinitionDao>[];
       json['definitions'].forEach((v) {

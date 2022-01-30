@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wordle_game/my_service.dart';
 
-import 'data/owlbot_info_defination_dao.dart';
-import 'data/owlbot_info_response.dart';
+import 'dao/owlbot_info_defination_dao.dart';
+import 'dao/owlbot_info_response.dart';
 
 class GameEndDialog {
   static showWin(
@@ -62,15 +62,15 @@ class GameEndDialog {
                             future: MyService.getDefinition(answer),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                                OwlbotInfoResponse? response =
-                                    snapshot.data as OwlbotInfoResponse?;
+                                OwlbotInfoResponseDao? response =
+                                    snapshot.data as OwlbotInfoResponseDao?;
                                 return buildDefinitionSection(response);
                               } else if (snapshot.hasError) {
                                 return Container();
                               }
                               return Container(
-                                  padding: EdgeInsets.all(16),
-                                  child: CircularProgressIndicator());
+                                  padding: const EdgeInsets.all(16),
+                                  child: const CircularProgressIndicator());
                             },
                           ),
                           const SizedBox(
@@ -111,6 +111,7 @@ class GameEndDialog {
   static showLose(
     BuildContext context, {
     Function()? onPlayAgain,
+    Function()? onPlayMore,
   }) async {
     await showCupertinoDialog(
         context: context,
@@ -145,7 +146,7 @@ class GameEndDialog {
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            "It might be difficult Try playing with new word.",
+                            "It might be difficult.\nTry playing with new word.",
                             style: GoogleFonts.varelaRound(
                                 color: Colors.white.withOpacity(0.7),
                                 fontSize: 22),
@@ -177,6 +178,30 @@ class GameEndDialog {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 6,),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              onPlayMore?.call();
+                            },
+                            child: MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    color: Colors.purple[400]),
+                                child: Center(
+                                  child: Text(
+                                    "New word",
+                                    style: GoogleFonts.varelaRound(
+                                        color: Colors.white, fontSize: 26),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -186,10 +211,10 @@ class GameEndDialog {
             ));
   }
 
-  static buildDefinitionSection(OwlbotInfoResponse? response) {
+  static buildDefinitionSection(OwlbotInfoResponseDao? response) {
     if (response?.definitions != null) {
       return Container(
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12)),
