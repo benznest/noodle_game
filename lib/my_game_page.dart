@@ -7,6 +7,7 @@ import 'package:wordle_game/words.dart';
 import 'game_board_widget.dart';
 import 'game_end_dialog.dart';
 import 'keyboard_widget.dart';
+import 'my_drawer.dart';
 import 'my_game.dart';
 
 class MyGamePage extends StatefulWidget {
@@ -26,6 +27,8 @@ class _MyGamePageState extends State<MyGamePage> with TickerProviderStateMixin {
   late Set<String> _listAlphabetCorrect;
   late Set<String> _listAlphabetNone;
   late bool _isGameEnd;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -56,7 +59,19 @@ class _MyGamePageState extends State<MyGamePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, cons) {
       return Scaffold(
+        key: _scaffoldKey,
         backgroundColor: const Color(0xff121213),
+        drawer: MyDrawer(onLoggedIn: (user){
+          print("displayName = ${user.user?.displayName}");
+          print("photo = ${user.user?.photoURL}");
+          setState(() {
+            //
+          });
+        },onLogOut: (){
+          setState(() {
+            //
+          });
+        },),
         body: Container(
           padding: const EdgeInsets.all(8),
           child: Stack(
@@ -114,6 +129,24 @@ class _MyGamePageState extends State<MyGamePage> with TickerProviderStateMixin {
                     },
                   ),
                 ],
+              ),
+              Align(
+                alignment: Alignment.topLeft,
+                child: GestureDetector(
+                  onTap: () async {
+                    _scaffoldKey.currentState?.openDrawer();
+                  },
+                  child:  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: Container(
+                        padding: const EdgeInsets.all(16),
+                        child: const Icon(
+                          Icons.menu_sharp,
+                          color: Colors.white,
+                          size: 32,
+                        )),
+                  ),
+                ),
               ),
               Align(
                 alignment: Alignment.topRight,
